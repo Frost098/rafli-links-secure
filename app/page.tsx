@@ -13,7 +13,7 @@ const LINKS = {
     { title: "Astra Companion", desc: "Smart character interface · Vestia Zeta", icon: "💬", color: "#db2777", href: "https://astra-companion-kappa.vercel.app/" },
     { title: "Moonlight Chess", desc: "Chess arena · Bot / 2P / Online", icon: "♟️", color: "#ca8a04", href: "https://chess-vert-pi.vercel.app/" },
     { title: "Ultron AI v4", desc: "Tactical intelligence interface", icon: "🤖", color: "#dc2626", href: "https://ultronai-v4.vercel.app/" },
-    { title: "RolxDesk", desc: "Multi-model AI desk · RD Hosted", icon: "🖥️", color: "#16a34a", href: "https://rolxdesk.vercel.app/" },
+    { title: "RolxDesk", desc: "Next-gen wrapped AI desk · Open source · RD Hosted", icon: "🖥️", color: "#16a34a", href: "https://rolxdesk.vercel.app/" },
   ],
 };
 
