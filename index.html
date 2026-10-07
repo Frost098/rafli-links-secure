@@ -1,1 +1,391 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rafli's Links — Secure</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #0f0f13 0%, #1a1a24 50%, #0d0d12 100%);
+      min-height: 100vh;
+      color: #e5e5e5;
+      display: flex;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+    .container { width: 100%; max-width: 480px; }
+    .header { text-align: center; margin-bottom: 36px; }
+    .avatar {
+      width: 88px; height: 88px; border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+      margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;
+      font-size: 36px; box-shadow: 0 8px 32px rgba(99, 102, 241, 0.35);
+    }
+    .header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.02em; }
+    .header p { font-size: 0.9rem; color: #a1a1aa; }
+    .links { display: flex; flex-direction: column; gap: 14px; }
+    .link-card {
+      display: flex; align-items: center; gap: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px; padding: 12px 16px 12px 12px;
+      text-decoration: none; color: inherit;
+      transition: all 0.22s ease; backdrop-filter: blur(8px);
+      cursor: pointer;
+    }
+    .link-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.18);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    .icon {
+      width: 52px; height: 52px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0;
+    }
+    .icon.purple { background: #7c3aed; }
+    .icon.blue { background: #2563eb; }
+    .icon.orange { background: #ea580c; }
+    .icon.teal { background: #0d9488; }
+    .icon.pink { background: #db2777; }
+    .icon.green { background: #16a34a; }
+    .icon.yellow { background: #ca8a04; }
+    .icon.red { background: #dc2626; }
+    .info { flex: 1; min-width: 0; }
+    .info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 2px; }
+    .info p { font-size: 0.8rem; color: #a1a1aa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .arrow { color: #71717a; font-size: 18px; }
+    .section-title {
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: #71717a; margin: 24px 0 12px 4px;
+    }
+    .footer { text-align: center; margin-top: 40px; font-size: 0.8rem; color: #52525b; }
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+      z-index: 100; align-items: center; justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: #18181b; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px; padding: 24px; width: 100%; max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto;
+    }
+    .modal h2 { font-size: 1.25rem; margin-bottom: 6px; }
+    .modal .sub { font-size: 0.85rem; color: #a1a1aa; margin-bottom: 20px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.8rem; color: #a1a1aa; margin-bottom: 6px; }
+    .form-group input, .form-group textarea {
+      width: 100%; padding: 11px 14px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.12); background: #27272a;
+      color: #fff; font-size: 0.95rem; outline: none; font-family: inherit;
+    }
+    .form-group input:focus, .form-group textarea:focus { border-color: #7c3aed; }
+    .form-group textarea { min-height: 80px; resize: vertical; }
+    .modal-btns { display: flex; gap: 10px; margin-top: 8px; }
+    .modal-btns button {
+      flex: 1; padding: 12px; border-radius: 10px; border: none;
+      font-size: 0.95rem; font-weight: 600; cursor: pointer;
+    }
+    .btn-cancel { background: #3f3f46; color: #e5e5e5; }
+    .btn-primary { background: #7c3aed; color: #fff; }
+    .btn-secondary { background: #2563eb; color: #fff; }
+    .error-msg { color: #f87171; font-size: 0.8rem; margin-top: 8px; display: none; }
+    .success-msg { color: #4ade80; font-size: 0.85rem; margin-top: 10px; display: none; line-height: 1.4; }
+    .divider { text-align: center; color: #52525b; font-size: 0.8rem; margin: 18px 0; position: relative; }
+    .key-status {
+      background: #27272a; border-radius: 10px; padding: 12px; margin-top: 12px;
+      font-size: 0.85rem; display: none;
+    }
+    .key-status.show { display: block; }
+    .key-status.valid { border-left: 3px solid #4ade80; }
+    .key-status.expired { border-left: 3px solid #f87171; }
+    .key-status.none { border-left: 3px solid #a1a1aa; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tab {
+      flex: 1; text-align: center; padding: 8px; border-radius: 8px;
+      background: #27272a; font-size: 0.85rem; cursor: pointer; border: 1px solid transparent;
+    }
+    .tab.active { background: #7c3aed; border-color: #7c3aed; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="avatar">🚀</div>
+      <h1>Rafli's Links</h1>
+      <p>Semua project penting di satu tempat</p>
+    </div>
+
+    <div class="section-title">Main Projects</div>
+    <div class="links">
+      <div class="link-card" onclick="openCisyPi()">
+        <div class="icon purple">🎬</div>
+        <div class="info">
+          <h3>CisyPi Stream</h3>
+          <p>Streaming motion graphics · Protected</p>
+        </div>
+        <div class="arrow">🔒</div>
+      </div>
+
+      <a class="link-card" href="https://ctf-nusantara-2026.vercel.app/" target="_blank" rel="noopener">
+        <div class="icon blue">🏴</div>
+        <div class="info">
+          <h3>CTF Nusantara 2026</h3>
+          <p>Cybersecurity competition platform</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a class="link-card" href="https://iq-battle-arena.vercel.app/" target="_blank" rel="noopener">
+        <div class="icon orange">🧠</div>
+        <div class="info">
+          <h3>IQ Battle Arena</h3>
+          <p>Solo & multiplayer IQ test battle</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a class="link-card" href="https://my-site-27czz42y-raflipratama020513.wix-vibe-site.com/" target="_blank" rel="noopener">
+        <div class="icon teal">💻</div>
+        <div class="info">
+          <h3>CodeVault / TTScript</h3>
+          <p>Share scripts & code snippets</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+    </div>
+
+    <div class="section-title">AI & Experiments</div>
+    <div class="links">
+      <a class="link-card" href="https://astra-companion-kappa.vercel.app/" target="_blank" rel="noopener">
+        <div class="icon pink">💬</div>
+        <div class="info">
+          <h3>Astra Companion</h3>
+          <p>Smart character interface · Vestia Zeta</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a class="link-card" href="https://chess-vert-pi.vercel.app/" target="_blank" rel="noopener">
+        <div class="icon yellow">♟️</div>
+        <div class="info">
+          <h3>Moonlight Chess</h3>
+          <p>Chess arena · Bot / 2P / Online</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a class="link-card" href="https://ultronai-v4.vercel.app/" target="_blank" rel="noopener">
+        <div class="icon red">🤖</div>
+        <div class="info">
+          <h3>Ultron AI v4</h3>
+          <p>Tactical intelligence interface</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+
+      <a class="link-card" href="https://rolxdesk.vercel.app/" target="_blank" rel="noopener">
+        <div class="icon green">🖥️</div>
+        <div class="info">
+          <h3>RolxDesk</h3>
+          <p>Multi-model AI desk · RD Hosted</p>
+        </div>
+        <div class="arrow">→</div>
+      </a>
+    </div>
+
+    <div class="footer">Made with ☕ · CisyPi Access System · Deployed on Vercel</div>
+  </div>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h2>🔒 CisyPi Stream</h2>
+      <p class="sub">Akses private. Masukkan key atau ajukan permintaan.</p>
+
+      <div class="tabs">
+        <div class="tab active" id="tabKey" onclick="switchTab('key')">Punya Key</div>
+        <div class="tab" id="tabRequest" onclick="switchTab('request')">Ajukan Akses</div>
+      </div>
+
+      <div id="panelKey">
+        <div class="form-group">
+          <label>Access Key</label>
+          <input type="password" id="keyInput" placeholder="Masukkan access key..." autocomplete="off">
+        </div>
+        <div class="error-msg" id="keyError">Key salah / sudah kadaluarsa / tidak tersedia.</div>
+        <div class="key-status" id="keyStatus"></div>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">Batal</button>
+          <button class="btn-primary" onclick="checkKey()">Buka Akses</button>
+        </div>
+      </div>
+
+      <div id="panelRequest" style="display:none;">
+        <div class="form-group">
+          <label>Nama / Identitas</label>
+          <input type="text" id="reqName" placeholder="Nama kamu...">
+        </div>
+        <div class="form-group">
+          <label>Alasan butuh akses</label>
+          <textarea id="reqReason" placeholder="Mau ngapain di CisyPi? Jelaskan singkat..."></textarea>
+        </div>
+        <div class="success-msg" id="reqSuccess"></div>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="closeModal()">Batal</button>
+          <button class="btn-secondary" onclick="submitRequest()">Ajukan Permintaan</button>
+        </div>
+        <p style="font-size:0.75rem;color:#71717a;margin-top:12px;line-height:1.4;">
+          Permintaan akan dikirim ke email owner via email client kamu. 
+          Local AI akan cek alasan & bisa generate temporary key jika memenuhi kriteria.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const MASTER_KEY = "cisypi-owner-2026";
+    const CISYPI_URL = "https://cisypistream-mktfzcae.manus.space/";
+    const OWNER_EMAIL = "raflipratama020513@gmail.com";
+
+    function getStoredKeys() {
+      try { return JSON.parse(localStorage.getItem("cisypi_keys") || "[]"); }
+      catch { return []; }
+    }
+
+    function saveKeys(keys) {
+      localStorage.setItem("cisypi_keys", JSON.stringify(keys));
+    }
+
+    function generateKey() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let key = "CISY-";
+      for (let i = 0; i < 4; i++) key += chars[Math.floor(Math.random() * chars.length)];
+      key += "-";
+      for (let i = 0; i < 4; i++) key += chars[Math.floor(Math.random() * chars.length)];
+      return key;
+    }
+
+    function localAIValidate(reason, name) {
+      const r = (reason || "").toLowerCase();
+      const n = (name || "").trim();
+      if (n.length < 2) return { ok: false, msg: "Nama terlalu pendek." };
+      if (r.length < 10) return { ok: false, msg: "Alasan terlalu singkat. Jelaskan lebih detail." };
+
+      const goodWords = ["stream", "motion", "graphics", "project", "belajar", "test", "demo", "review", "kolaborasi", "kerja", "tugas", "kuliah", "portofolio"];
+      const badWords = ["hack", "crack", "steal", "jual", "spam", "ddos"];
+
+      if (badWords.some(w => r.includes(w))) {
+        return { ok: false, msg: "Alasan ditolak oleh local AI (terdeteksi niat buruk)." };
+      }
+
+      const score = goodWords.filter(w => r.includes(w)).length;
+      if (score >= 1 || r.length > 40) {
+        const key = generateKey();
+        const expires = Date.now() + (2 * 60 * 60 * 1000);
+        const keys = getStoredKeys();
+        keys.push({ key, expires, name: n, reason: r, created: Date.now() });
+        saveKeys(keys);
+        return { ok: true, key, expires, msg: "Local AI menyetujui. Temporary key digenerate (berlaku 2 jam)." };
+      }
+
+      return { ok: false, msg: "Local AI belum cukup yakin. Permintaan tetap dikirim ke owner untuk review manual." };
+    }
+
+    function isKeyValid(input) {
+      if (input === MASTER_KEY) return { valid: true, type: "master" };
+      const keys = getStoredKeys();
+      const found = keys.find(k => k.key === input);
+      if (!found) return { valid: false, type: "none" };
+      if (Date.now() > found.expires) return { valid: false, type: "expired", data: found };
+      return { valid: true, type: "temp", data: found };
+    }
+
+    function openCisyPi() {
+      document.getElementById("modal").classList.add("show");
+      switchTab("key");
+      document.getElementById("keyInput").value = "";
+      document.getElementById("keyError").style.display = "none";
+      document.getElementById("keyStatus").className = "key-status";
+      document.getElementById("reqSuccess").style.display = "none";
+    }
+
+    function closeModal() {
+      document.getElementById("modal").classList.remove("show");
+    }
+
+    function switchTab(tab) {
+      document.getElementById("tabKey").classList.toggle("active", tab === "key");
+      document.getElementById("tabRequest").classList.toggle("active", tab === "request");
+      document.getElementById("panelKey").style.display = tab === "key" ? "block" : "none";
+      document.getElementById("panelRequest").style.display = tab === "request" ? "block" : "none";
+    }
+
+    function checkKey() {
+      const input = document.getElementById("keyInput").value.trim();
+      const result = isKeyValid(input);
+      const err = document.getElementById("keyError");
+      const status = document.getElementById("keyStatus");
+
+      if (result.valid) {
+        err.style.display = "none";
+        status.className = "key-status show valid";
+        if (result.type === "master") {
+          status.innerHTML = "✅ Master key valid. Mengalihkan...";
+        } else {
+          const left = Math.round((result.data.expires - Date.now()) / 60000);
+          status.innerHTML = `✅ Temporary key valid (sisa ~${left} menit). Mengalihkan...`;
+        }
+        setTimeout(() => { window.location.href = CISYPI_URL; }, 900);
+      } else {
+        err.style.display = "block";
+        status.className = "key-status show " + (result.type === "expired" ? "expired" : "none");
+        if (result.type === "expired") {
+          status.innerHTML = "⏰ Key ini sudah <b>kadaluarsa</b>. Ajukan permintaan baru.";
+        } else {
+          status.innerHTML = "❌ Key tidak ditemukan / tidak tersedia.";
+        }
+      }
+    }
+
+    function submitRequest() {
+      const name = document.getElementById("reqName").value.trim();
+      const reason = document.getElementById("reqReason").value.trim();
+      const success = document.getElementById("reqSuccess");
+
+      const ai = localAIValidate(reason, name);
+
+      const subject = encodeURIComponent(`[CisyPi Access Request] dari ${name || "Anonim"}`);
+      let body = `Halo Owner,%0A%0AAda permintaan akses CisyPi Stream:%0A%0ANama: ${name || "-"}%0AAlasan: ${reason || "-"}%0AWaktu: ${new Date().toLocaleString("id-ID")}%0A%0A`;
+      if (ai.ok) {
+        body += `Local AI Status: DISETUJUI%0ATemporary Key: ${ai.key}%0ABerlaku sampai: ${new Date(ai.expires).toLocaleString("id-ID")}%0A%0A`;
+      } else {
+        body += `Local AI Status: PERLU REVIEW MANUAL%0ACatatan AI: ${ai.msg}%0A%0A`;
+      }
+      body += `---%0ADikirim dari Rafli Links Secure`;
+
+      window.location.href = `mailto:${OWNER_EMAIL}?subject=${subject}&body=${body}`;
+
+      success.style.display = "block";
+      if (ai.ok) {
+        success.innerHTML = `✅ Local AI menyetujui!<br>Temporary Key: <b>${ai.key}</b><br>Berlaku 2 jam. Email juga sudah disiapkan ke owner.`;
+        document.getElementById("keyInput").value = ai.key;
+      } else {
+        success.innerHTML = `📨 Permintaan siap dikirim ke owner.<br>${ai.msg}<br>Buka email client kamu lalu kirim.`;
+      }
+    }
+
+    document.getElementById("keyInput").addEventListener("keydown", e => {
+      if (e.key === "Enter") checkKey();
+    });
+
+    document.getElementById("modal").addEventListener("click", e => {
+      if (e.target.id === "modal") closeModal();
+    });
+  </script>
+</body>
+</html>
